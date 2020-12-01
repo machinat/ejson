@@ -1,4 +1,5 @@
-import {
+const Base64 = require('js-base64');
+const {
   isFunction,
   isObject,
   keysOf,
@@ -8,7 +9,7 @@ import {
   isArguments,
   isInfOrNaN,
   handleError,
-} from './utils';
+} = require('./utils');
 
 /**
  * @namespace
@@ -211,7 +212,7 @@ const builtinConverters = [
       return EJSON._isCustomType(obj);
     },
     toJSONValue(obj) {
-      const jsonValue = Meteor._noYieldsAllowed(() => obj.toJSONValue());
+      const jsonValue = obj.toJSONValue();
       return {$type: obj.typeName(), $value: jsonValue};
     },
     fromJSONValue(obj) {
@@ -220,7 +221,7 @@ const builtinConverters = [
         throw new Error(`Custom EJSON type ${typeName} is not defined`);
       }
       const converter = customTypes.get(typeName);
-      return Meteor._noYieldsAllowed(() => converter(obj.$value));
+      return converter(obj.$value);
     },
   },
 ];
@@ -395,7 +396,7 @@ EJSON.stringify = handleError((item, options) => {
   let serialized;
   const json = EJSON.toJSONValue(item);
   if (options && (options.canonical || options.indent)) {
-    import canonicalStringify from './stringify';
+    const canonicalStringify = require('./stringify');
     serialized = canonicalStringify(json, options);
   } else {
     serialized = JSON.stringify(json);
@@ -607,11 +608,19 @@ EJSON.clone = v => {
  * @locus Anywhere
  * @param {Number} size The number of bytes of binary data to allocate.
  */
-// EJSON.newBinary is the public documented API for this functionality,
-// but the implementation is in the 'base64' package to avoid
-// introducing a circular dependency. (If the implementation were here,
-// then 'base64' would have to use EJSON.newBinary, and 'ejson' would
-// also have to use 'base64'.)
-EJSON.newBinary = Base64.newBinary;
+EJSON.newBinary = len => {
+  if (typeof Uint8Array === 'undefined' || typeof ArrayBuffer === 'undefined') {
+    var ret = [];
 
-export { EJSON };
+    for (var _i2 = 0; _i2 < len; _i2++) {
+      ret.push(0);
+    }
+
+    ret.$Uint8ArrayPolyfill = true;
+    return ret;
+  }
+
+  return new Uint8Array(new ArrayBuffer(len));
+};
+
+module.exports = { EJSON };

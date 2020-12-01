@@ -1,0 +1,12 @@
+{
+  "name": "@machinat/ejson",
+  "scripts": {
+    "test": "node ./ejson_tests.js"
+  },
+  "dependencies": {
+    "js-base64": "^3.6.0"
+  },
+  "devDependencies": {
+    "zora": "^4.0.1"
+  }
+}

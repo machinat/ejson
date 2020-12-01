@@ -119,4 +119,4 @@ const canonicalStringify = (value, options) => {
   return str('', {'': value}, allOptions.indent, '', allOptions.canonical);
 };
 
-export default canonicalStringify;
+module.exports = canonicalStringify;

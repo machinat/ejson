@@ -1,4 +1,4 @@
-import { EJSON } from './ejson';
+const { EJSON } = require('./ejson');
 
 class Address {
   constructor(city, state) {
@@ -71,4 +71,4 @@ const EJSONTest = {
   Holder,
 };
 
-export default EJSONTest;
+module.exports = EJSONTest;

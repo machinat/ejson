@@ -1,8 +1,9 @@
-import { EJSON } from './ejson';
-import EJSONTest from './custom_models_for_tests';
+const { test } = require('zora');
+const { EJSON } = require('./ejson');
+const EJSONTest = require('./custom_models_for_tests');
 
-Tinytest.add('ejson - keyOrderSensitive', test => {
-  test.isTrue(EJSON.equals({
+test('ejson - keyOrderSensitive', test => {
+  test.ok(EJSON.equals({
     a: {b: 1, c: 2},
     d: {e: 3, f: 4},
   }, {
@@ -10,7 +11,7 @@ Tinytest.add('ejson - keyOrderSensitive', test => {
     a: {c: 2, b: 1},
   }));
 
-  test.isFalse(EJSON.equals({
+  test.notOk(EJSON.equals({
     a: {b: 1, c: 2},
     d: {e: 3, f: 4},
   }, {
@@ -18,18 +19,18 @@ Tinytest.add('ejson - keyOrderSensitive', test => {
     a: {c: 2, b: 1},
   }, {keyOrderSensitive: true}));
 
-  test.isFalse(EJSON.equals({
+  test.notOk(EJSON.equals({
     a: {b: 1, c: 2},
     d: {e: 3, f: 4},
   }, {
     a: {c: 2, b: 1},
     d: {f: 4, e: 3},
   }, {keyOrderSensitive: true}));
-  test.isFalse(EJSON.equals({a: {}}, {a: {b: 2}}, {keyOrderSensitive: true}));
-  test.isFalse(EJSON.equals({a: {b: 2}}, {a: {}}, {keyOrderSensitive: true}));
+  test.notOk(EJSON.equals({a: {}}, {a: {b: 2}}, {keyOrderSensitive: true}));
+  test.notOk(EJSON.equals({a: {b: 2}}, {a: {}}, {keyOrderSensitive: true}));
 });
 
-Tinytest.add('ejson - nesting and literal', test => {
+test('ejson - nesting and literal', test => {
   const d = new Date();
   const obj = {$date: d};
   const eObj = EJSON.toJSONValue(obj);
@@ -37,53 +38,53 @@ Tinytest.add('ejson - nesting and literal', test => {
   test.equal(obj, roundTrip);
 });
 
-Tinytest.add('ejson - some equality tests', test => {
-  test.isTrue(EJSON.equals({a: 1, b: 2, c: 3}, {a: 1, c: 3, b: 2}));
-  test.isFalse(EJSON.equals({a: 1, b: 2}, {a: 1, c: 3, b: 2}));
-  test.isFalse(EJSON.equals({a: 1, b: 2, c: 3}, {a: 1, b: 2}));
-  test.isFalse(EJSON.equals({a: 1, b: 2, c: 3}, {a: 1, c: 3, b: 4}));
-  test.isFalse(EJSON.equals({a: {}}, {a: {b: 2}}));
-  test.isFalse(EJSON.equals({a: {b: 2}}, {a: {}}));
+test('ejson - some equality tests', test => {
+  test.ok(EJSON.equals({a: 1, b: 2, c: 3}, {a: 1, c: 3, b: 2}));
+  test.notOk(EJSON.equals({a: 1, b: 2}, {a: 1, c: 3, b: 2}));
+  test.notOk(EJSON.equals({a: 1, b: 2, c: 3}, {a: 1, b: 2}));
+  test.notOk(EJSON.equals({a: 1, b: 2, c: 3}, {a: 1, c: 3, b: 4}));
+  test.notOk(EJSON.equals({a: {}}, {a: {b: 2}}));
+  test.notOk(EJSON.equals({a: {b: 2}}, {a: {}}));
 });
 
-Tinytest.add('ejson - equality and falsiness', test => {
-  test.isTrue(EJSON.equals(null, null));
-  test.isTrue(EJSON.equals(undefined, undefined));
-  test.isFalse(EJSON.equals({foo: 'foo'}, null));
-  test.isFalse(EJSON.equals(null, {foo: 'foo'}));
-  test.isFalse(EJSON.equals(undefined, {foo: 'foo'}));
-  test.isFalse(EJSON.equals({foo: 'foo'}, undefined));
+test('ejson - equality and falsiness', test => {
+  test.ok(EJSON.equals(null, null));
+  test.ok(EJSON.equals(undefined, undefined));
+  test.notOk(EJSON.equals({foo: 'foo'}, null));
+  test.notOk(EJSON.equals(null, {foo: 'foo'}));
+  test.notOk(EJSON.equals(undefined, {foo: 'foo'}));
+  test.notOk(EJSON.equals({foo: 'foo'}, undefined));
 });
 
-Tinytest.add('ejson - NaN and Inf', test => {
+test('ejson - NaN and Inf', test => {
   test.equal(EJSON.parse('{"$InfNaN": 1}'), Infinity);
   test.equal(EJSON.parse('{"$InfNaN": -1}'), -Infinity);
-  test.isTrue(Number.isNaN(EJSON.parse('{"$InfNaN": 0}')));
+  test.ok(Number.isNaN(EJSON.parse('{"$InfNaN": 0}')));
   test.equal(EJSON.parse(EJSON.stringify(Infinity)), Infinity);
   test.equal(EJSON.parse(EJSON.stringify(-Infinity)), -Infinity);
-  test.isTrue(Number.isNaN(EJSON.parse(EJSON.stringify(NaN))));
-  test.isTrue(EJSON.equals(NaN, NaN));
-  test.isTrue(EJSON.equals(Infinity, Infinity));
-  test.isTrue(EJSON.equals(-Infinity, -Infinity));
-  test.isFalse(EJSON.equals(Infinity, -Infinity));
-  test.isFalse(EJSON.equals(Infinity, NaN));
-  test.isFalse(EJSON.equals(Infinity, 0));
-  test.isFalse(EJSON.equals(NaN, 0));
+  test.ok(Number.isNaN(EJSON.parse(EJSON.stringify(NaN))));
+  test.ok(EJSON.equals(NaN, NaN));
+  test.ok(EJSON.equals(Infinity, Infinity));
+  test.ok(EJSON.equals(-Infinity, -Infinity));
+  test.notOk(EJSON.equals(Infinity, -Infinity));
+  test.notOk(EJSON.equals(Infinity, NaN));
+  test.notOk(EJSON.equals(Infinity, 0));
+  test.notOk(EJSON.equals(NaN, 0));
 
-  test.isTrue(EJSON.equals(
+  test.ok(EJSON.equals(
     EJSON.parse('{"a": {"$InfNaN": 1}}'),
     {a: Infinity}
   ));
-  test.isTrue(EJSON.equals(
+  test.ok(EJSON.equals(
     EJSON.parse('{"a": {"$InfNaN": 0}}'),
     {a: NaN}
   ));
 });
 
-Tinytest.add('ejson - clone', test => {
+test('ejson - clone', test => {
   const cloneTest = (x, identical) => {
     const y = EJSON.clone(x);
-    test.isTrue(EJSON.equals(x, y));
+    test.ok(EJSON.equals(x, y));
     test.equal(x === y, !!identical);
   };
   cloneTest(null, true);
@@ -101,7 +102,7 @@ Tinytest.add('ejson - clone', test => {
   testCloneArgs(1, 2, 'foo', [4]);
 });
 
-Tinytest.add('ejson - stringify', test => {
+test('ejson - stringify', test => {
   test.equal(EJSON.stringify(null), 'null');
   test.equal(EJSON.stringify(true), 'true');
   test.equal(EJSON.stringify(false), 'false');
@@ -180,14 +181,16 @@ Tinytest.add('ejson - stringify', test => {
 
   test.throws(
     () => {
-      const col = new Mongo.Collection('test');
-      EJSON.stringify(col)
+      const a = {};
+      const b = { x: a };
+      a.y = b;
+      EJSON.stringify(a)
     },
     /Converting circular structure to JSON/
   );
 });
 
-Tinytest.add('ejson - parse', test => {
+test('ejson - parse', test => {
   test.equal(EJSON.parse('[1,2,3]'), [1, 2, 3]);
   test.throws(
     () => { EJSON.parse(null); },
@@ -195,7 +198,7 @@ Tinytest.add('ejson - parse', test => {
   );
 });
 
-Tinytest.add("ejson - regexp", test => {
+test("ejson - regexp", test => {
   test.equal(EJSON.stringify(/foo/gi), "{\"$regexp\":\"foo\",\"$flags\":\"gi\"}");
   var d = new RegExp("foo", "gi");
   var obj = { $regexp: "foo", $flags: "gi" };
@@ -205,7 +208,7 @@ Tinytest.add("ejson - regexp", test => {
   test.equal(obj, roundTrip);
 });
 
-Tinytest.add('ejson - custom types', test => {
+test('ejson - custom types', test => {
   const testSameConstructors = (someObj, compareWith) => {
     test.equal(someObj.constructor, compareWith.constructor);
     if (typeof someObj === 'object') {
@@ -256,7 +259,7 @@ Tinytest.add('ejson - custom types', test => {
 
 // Verify objects with a property named "length" can be handled by the EJSON
 // API properly (see https://github.com/meteor/meteor/issues/5175).
-Tinytest.add('ejson - handle objects with properties named "length"', test => {
+test('ejson - handle objects with properties named "length"', test => {
   class Widget {
     constructor() {
       this.length = 10;
@@ -265,10 +268,10 @@ Tinytest.add('ejson - handle objects with properties named "length"', test => {
   const widget = new Widget();
 
   const toJsonWidget = EJSON.toJSONValue(widget);
-  test.equal(widget, toJsonWidget);
+  test.equal({ length: 10 }, toJsonWidget);
 
   const fromJsonWidget = EJSON.fromJSONValue(widget);
-  test.equal(widget, fromJsonWidget);
+  test.equal({ length: 10 }, fromJsonWidget);
 
   const stringifiedWidget = EJSON.stringify(widget);
   test.equal(stringifiedWidget, '{"length":10}');
@@ -276,11 +279,11 @@ Tinytest.add('ejson - handle objects with properties named "length"', test => {
   const parsedWidget = EJSON.parse('{"length":10}');
   test.equal({ length: 10 }, parsedWidget);
 
-  test.isFalse(EJSON.isBinary(widget));
+  test.notOk(EJSON.isBinary(widget));
 
   const widget2 = new Widget();
-  test.isTrue(widget, widget2);
+  test.equal(widget, widget2);
 
   const clonedWidget = EJSON.clone(widget);
-  test.equal(widget, clonedWidget);
+  test.equal({ length: 10 }, clonedWidget);
 });
