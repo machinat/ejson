@@ -1,4 +1,5 @@
 # ejson
+**This package is derived from EJSON module of Meteor. You can check the original source at:**
 [Source code of released version](https://github.com/meteor/meteor/tree/master/packages/ejson) | [Source code of development version](https://github.com/meteor/meteor/tree/devel/packages/ejson)
 ***
 

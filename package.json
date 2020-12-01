@@ -1,5 +1,8 @@
 {
   "name": "@machinat/ejson",
+  "main": "./ejson.js",
+  "license": "MIT",
+  "version": "0.1.0",
   "scripts": {
     "test": "node ./ejson_tests.js"
   },
